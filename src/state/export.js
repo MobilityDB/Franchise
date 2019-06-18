@@ -33,11 +33,7 @@ function dumpCell(cell){
         selected: cell.selected
     };
     if(cell.result){
-        dump.result = {
-            nameable: cell.result.nameable,
-            columns: cell.result.columns,
-            values: (cell.result.values || []).slice(0, 200)
-        }
+        dump.result = Object.assign({}, cell.result)
     }
     return dump;
 }

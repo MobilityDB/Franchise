@@ -244,6 +244,7 @@
     tables = parseTables(options && options.tables)
     var defaultTableName = options && options.defaultTable;
     var disableKeywords = options && options.disableKeywords;
+    var extraKeywords = options && options.extraKeywords;
     defaultTable = defaultTableName && getTable(defaultTableName);
     keywords = getKeywords(editor);
     identifierQuote = getIdentifierQuote(editor);
@@ -294,6 +295,8 @@
         });
       }
       addMatches(result, search, defaultTable, function(w) {return w;});
+
+      addMatches(result, search, extraKeywords, function(w) {return w;});
 
       if (!disableKeywords){
         let compoundKeywordBlacklist = [

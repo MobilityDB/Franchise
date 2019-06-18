@@ -20,8 +20,8 @@ import * as MongoConnector from './mongo'
 import * as CartoConnector from './carto'
 
 const Databases = [
-    SQLiteConnector,
     PostgresConnector,
+/*    SQLiteConnector,
     MySQLConnector,
     BigQueryConnector,
     CartoConnector,
@@ -32,7 +32,7 @@ const Databases = [
     'Microsoft SQL Server',
     'Oracle',
     'IBM DB2',
-    'Teradata',
+    'Teradata',*/
 ]
 
 

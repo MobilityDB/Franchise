@@ -117,6 +117,7 @@ export class Cell extends React.PureComponent {
               hint: CodeMirror.hint.sql,
               // referenceFn: db.reference,
               refRe: hintRefRe,
+              extraKeywords: connect.keywords,
 
               tables: _.fromPairs((connect.schema || []).map(k => [k.name, k.columns]).concat(virtualSchema)),
             } : null,

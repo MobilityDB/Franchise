@@ -187,9 +187,7 @@ export class CardVisualizer extends React.Component {
     function getStagingValue(rowIndex, colIndex){
         return db.getStagingValue(deltas, getRawValue(rowIndex, colIndex), result, rowIndex, colIndex, db, config);
     }
-
-    console.log('config',config)
-
+    
     function renderValue(rowIndex, colIndex){
         let changed_value = getStagingValue(rowIndex, colIndex)
         let raw_value = getRawValue(rowIndex, colIndex);

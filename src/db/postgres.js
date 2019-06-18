@@ -60,14 +60,12 @@ export class Configure extends React.Component {
         />
     </div>
 
-
-
     return <div>
       <img src={ require('./img/postgres.svg')} style={{ height: 40 }} />
 
       <div className='pg-form'>
 
-        <div>
+        <div className='pg-settings'>
           <div>
             <UnmountClosed isOpened={!!credentials.autofilled && connect.bridge_status === 'connected'}>
               <div className='pt-callout pt-icon-tick pt-intent-success'>
@@ -135,11 +133,34 @@ async function getSchema(){
     }))
 }
 
+async function getKeywords(){
+    let results = await sendRequest({
+        action: 'exec',
+        sql: `WITH nsp AS (
+                    SELECT DISTINCT extnamespace 
+                    FROM pg_extension 
+                    WHERE extname IN ('postgis', 'mercury')
+                )
+                    
+                SELECT string_agg(keyword, ' ') FROM (
+                    SELECT DISTINCT proname AS keyword 
+                        FROM pg_proc
+                        WHERE pronamespace IN (SELECT * FROM nsp)
+                        AND proname NOT LIKE '\\_%'
+                    UNION
+                    SELECT DISTINCT typname AS keyword
+                        FROM pg_type
+                        WHERE typnamespace IN (SELECT * FROM nsp)
+                        AND typname NOT LIKE '\\_%'
+                    ORDER BY keyword
+                ) AS allkw ;`
+    })
 
+    return results.results.rows[0][0].split(" ")
+}
 
 export async function run(query, cellId){
     let expandedQuery = expandQueryRefs(query, cellId);
-    console.log(expandedQuery)
     let result = await _runQuery(expandedQuery);
     result.query = query;
     State.apply('connect', 'schema', U.replace(await getSchema()))
@@ -151,11 +172,23 @@ export async function run(query, cellId){
 
 
 async function _runQuery(query){
-    var response = await sendRequest({ action: 'exec', sql: query })
+    let response = await sendRequest({ action: 'exec', sql: query })
+    let oids = response.results.fields.map(k => k.dataTypeID)
+    let typeq = oids.map(o => `SELECT typname FROM pg_catalog.pg_type WHERE oid = ${o}`).join(' UNION ALL ')
+    let typesresp = await sendRequest({ action: 'exec', sql: typeq})
     let columns = response.results.fields.map(k => k.name);
+    let names = {}
+    for(let idx in columns) {
+        let col = columns[idx]
+        if(names[col])
+            columns[idx] = col +  Math.floor(Math.random() * 100000000)
+        else
+            names[col] = 1 ;
+    }
     let result = {
         columns,
         values: response.results.rows,
+        types: typesresp.results.rows.map(r => r[0]),
         id: response.id
     }
     result.astInput = query;
@@ -170,6 +203,7 @@ export async function connectDB(){
         if(!result.ready) throw new Error(result.error)
 
         State.apply('connect', 'schema', U.replace(await getSchema()))
+        State.apply('connect', 'keywords', await getKeywords())
     })
 }
 

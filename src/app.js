@@ -24,12 +24,13 @@ export default class App extends React.PureComponent {
         return <div>
             <div className="first-page">
                 <Header empty={empty} />
+                <div className="row-1 header">Check the MobilityDB docs <a target="_blank" href="https://docs.mobilitydb.com/nightly">here</a></div>
                 <div className="configure-wrap">
                     <Configure 
                         config={state.config} 
                         connect={state.connect} 
                         empty={empty} />
-                </div>
+                </div>                
                 <Notebook 
                     notebook={state.notebook} 
                     connect={state.connect} 
@@ -37,11 +38,11 @@ export default class App extends React.PureComponent {
                     trash={state.trash}
                     config={state.config}/>
                 <DeltaPane deltas={state.deltas} connect={state.connect} />
-            </div>
-            <HelpPage empty={empty} connect={state.connect} config={state.config} />
+            </div>            
+            <div className="footer"><p><a target="_blank" href="https://franchise.cloud/">Powered by Franchise</a></p></div>
         </div>
     }
-    
+    // <HelpPage empty={empty} connect={state.connect} config={state.config}>
 }
 
 
@@ -49,8 +50,9 @@ class Header extends React.PureComponent {
     render(){
         return <div className="header-wrap">
             <div className="header">
-                <a href="/" target="_blank"><h1>Franchise</h1></a>
-                <SloganToggler />
+                <img src={require('./db/img/mobilitydb.png')} style={{height: 120/*, verticalAlign: 'top'*/}} />
+                <h1>MobilityDB demo</h1>
+
                 { this.props.empty ? null : <ExportButton /> }
             </div>   
         </div> 

@@ -34,8 +34,7 @@ function tryOpenBridge(){
         // console.log('socket opened')
         if(getDB().requires_bridge){
             State.apply('connect', 'bridge_status', U.replace('connected'))
-            getDB().bridgeConnected(clientConnectorSocket)
-
+            getDB().bridgeConnected(clientConnectorSocket)	        
             while(connectQueue.length > 0){
                 let callback = connectQueue.shift();
                 try { callback() } catch (err) { console.error(err) }
@@ -96,7 +95,7 @@ export function FranchiseClientConnector({ connect }){
         return <p><div className='pt-callout pt-intent-danger'>
             <h5>Browser Compatibility</h5>
             <p>
-                The Franchise web interface connects to a local bridge application to mediate connections to external databases. 
+                The Franchise web interface connects to a bridge application to mediate connections to the database. 
             </p>
             <p>
                 <b>Unfortunately</b>, your browser does not support connections between secure HTTPS websites and desktop applications. 
@@ -110,13 +109,11 @@ export function FranchiseClientConnector({ connect }){
     return <UnmountClosed isOpened={connect.bridge_status !== 'connected' && !isElectron()}>
         <div className='pt-callout pt-intent-warning'>
             <h5>Connect the Database Bridge</h5>
-
             <div>Run <code>npx franchise-client@0.2.7</code> in your terminal to start the franchise database bridge. 
             </div>
             <div>
             If the npx command is not found, <a href="https://nodejs.org/en/download/current/">install the latest version of node</a> and try again.
-            </div>
-            
+            </div>            
             <div>These instructions will automatically collapse as soon as the bridge is detected.</div>
         </div>
     </UnmountClosed>
